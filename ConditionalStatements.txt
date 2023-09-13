@@ -1,0 +1,19 @@
+Оператори за сравнение: 
+Equal to -> == 
+Not equal -> !=
+Знак за присвояване -> =
+Greater than -> >
+Greater than or equal -> >= 
+Less than -> <
+Less than or equal -> <=
+
+Проверки: 
+if(логически израз)
+{ 
+	Executable code
+}
+
+
+Дебъгване 
+Вложени проверки
+Логически оператори
