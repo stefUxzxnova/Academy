@@ -20,7 +20,15 @@ public class MoreTasks {
         //Sunglasses(scanner);
         //PyramidWithIncreasingDigits(scanner);
         //ArrowPattern(scanner);
-        StaircasePattern(scanner);
+        //StaircasePattern(scanner);
+        //HourglassPattern(scanner);
+        //LeftArrowPattern(scanner);
+        //Pyramid(scanner);
+        //AlternativeConditions(scanner);
+        //EqualSumOfOddAndEvenPositions(scanner);
+        //PasswordGenerator(scanner);
+        //SpecialNumbers(scanner);
+        System.out.println(Change(scanner));
     }
 
     //21.
@@ -180,6 +188,32 @@ public class MoreTasks {
     }
 
     //27.
+    public static int Change(Scanner scanner){
+        double amount = Double.parseDouble(scanner.nextLine());
+        int count = 0;
+        int lvPart = (int)amount;
+        int stotinkiPart = (int)(amount * 100) % 100;
+        for (int i = 2; i >= 1 ; i--) {
+            int temp = lvPart / i;
+            count += temp;
+            if (lvPart - temp * i == 0 ) {
+                break;
+            }
+            lvPart -= temp * i;
+        }
+        for (int i = 50; i >= 1 ; i--) {
+            if (i != 50 && i != 20 && i != 10 && i != 5 && i != 2 && i != 1) {
+                continue;
+            }
+            int temp = stotinkiPart / i;
+            count += temp;
+            if (stotinkiPart - temp * i == 0 ) {
+                break;
+            }
+            stotinkiPart -= temp * i;
+        }
+        return count;
+    }
 
 
     //28.
@@ -461,7 +495,208 @@ public class MoreTasks {
     }
 
     //41.
+    public static void HourglassPattern (Scanner scanner){
+        int n = Integer.parseInt(scanner.nextLine());
+        int temp = 0;
+        int boundary = 0;
+        if (n % 2 == 0) {
+            boundary = n + 1;
+            temp = 2;
+        }else {
+            boundary = n + 2;
+            temp = 1;
+        }
+        for (int i = 1; i <= boundary; i++) {
+            //първи и последен ред
+            if (i == 1 || i == boundary ) {
+                for (int j = 1; j <= n + 2; j++) {
+                    System.out.print("#");
+                }
+            //до средата вкл.
+            }else if (i <= Math.ceil(boundary/2.0) ) {
+                for (int j = 1; j <= i - 1 ; j++) {
+                    System.out.print(" ");
+                }
+                System.out.print("#");
 
+                for (int j = 1; j <= (n+2) - 2 * i ; j++) {
+                    System.out.print(" ");
+                }
+                System.out.print("#");
+            }else{
+                for (int j = 1; j <= boundary - i ; j++) {
+                    System.out.print(" ");
+                }
+                System.out.print("#");
+                for (int j = 1; j <= temp ; j++) {
+                    System.out.print(" ");
+                }
+                temp += 2;
+                System.out.print("#");
+            }
+            System.out.println();
+        }
+    }
+
+    //42.
+    public static void LeftArrowPattern (Scanner scanner){
+        int n = Integer.parseInt(scanner.nextLine());
+        for (int i = 1; i <= (n * 2) - 3; i++) {
+            if (i <= n - 1) {
+                for (int j = 1; j < n - i; j++) {
+                    System.out.print(" ");
+                }
+                for (int j = 1; j <= i; j++) {
+                    System.out.print("*");
+                }
+                System.out.println();
+            } else {
+                for (int j = 0; j <= i - n; j++) {
+                    System.out.print(" ");
+                }
+                for (int j = 1; j <= (2 * (n-1)) - i ; j++) {
+                    System.out.print("*");
+                }
+                System.out.println();
+            }
+        }
+    }
+
+    //43.
+    public static void Pyramid(Scanner scanner){
+        int n = Integer.parseInt(scanner.nextLine());
+//        int i = 1;
+//        //колко цифри са изписани на съответния ред
+//        int count = 0;
+//        //колко трябва да бъдат изписани
+//        int temp = 1;
+//        while(i <= n){
+//            count++;
+//            System.out.print(i);
+//            if (temp == count) {
+//                System.out.println();
+//                count = 0;
+//                temp++;
+//            }
+//            i++;
+//        }
+
+        int currentNum = 1;
+        for (int j = 1; currentNum <= n; j++) {
+            for (int k = 1; k <= j; k++) {
+                if (currentNum > n) {
+                    break;
+                }
+                System.out.print(currentNum);
+                currentNum++;
+            }
+            System.out.println();
+        }
+    }
+
+    //44.
+    public static void AlternativeConditions(Scanner scanner){
+        int n = Integer.parseInt(scanner.nextLine());
+        int currentNum = 1;
+
+        //pyramid
+        for (int i = 1; currentNum <= n; i++) {
+            for (int j = 1; j <= Math.ceil(n/2) - i ; j++) {
+                System.out.print(" ");
+            }
+            for (int j = 1; j <= i ; j++) {
+                if (currentNum > n) {
+                    break;
+                }
+                System.out.printf("%d ", currentNum);
+                currentNum++;
+            }
+            System.out.println();
+        }
+    }
+
+    //45.
+    public static void EqualSumOfOddAndEvenPositions (Scanner scanner){
+        int num1 = Integer.parseInt(scanner.nextLine());
+        int num2 = Integer.parseInt(scanner.nextLine());
+        while(num2 < 100000 || num2 > 300000){
+            num2 = Integer.parseInt(scanner.nextLine());
+        }
+        while(num1 < 100000 || num1 > 300000 || num1 > num2){
+            num1 = Integer.parseInt(scanner.nextLine());
+        }
+        int sumEvenNum = 0;
+        int sumOddNum = 0;
+        //колко числа са се отпечатали
+        int count = 0;
+        //обхожда всички числа в интервала
+        for (int i = num1; i <= num2 ; i++) {
+            int temp = i;
+            //обхожда отделните цифри на съответното число
+            for (int j = 1; j <= 6; j++) {
+                if (j % 2 == 0) {
+                    sumOddNum += temp % 10;
+                }else {
+                    sumEvenNum += temp % 10;
+                }
+                temp /= 10;
+            }
+            if (sumEvenNum == sumOddNum) {
+                System.out.println(i);
+                count ++;
+            }
+            sumOddNum = 0;
+            sumEvenNum = 0;
+        }
+        if (count == 0) {
+            System.out.println("None");
+        }
+    }
+
+    //46.
+    public static void PasswordGenerator (Scanner scanner) {
+        int n = Integer.parseInt(scanner.nextLine());
+        int l = Integer.parseInt(scanner.nextLine());
+        for (int i = 1; i < n; i++) {
+            for (int j = 1; j < n; j++) {
+                for (int k = 97; k < 97 + l ; k++) {
+                    //ASCII table -> from 97 to 122
+                    for (int m = 97; m < 97 + l; m++) {
+                        for (int o = 1; o <= n; o++) {
+                            if ((o <= i) || (o <= j)) {
+                                continue;
+                            }
+                            System.out.printf("%d%d%c%c%d%n", i, j, (char)k, (char)m, o );
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    //47.
+    public static void SpecialNumbers (Scanner scanner){
+        int n = Integer.parseInt(scanner.nextLine());
+        boolean isSpecialNum = true;
+        for (int i = 1111; i <= 9999 ; i++) {
+            int temp = i;
+            for (int j = 1; j <= 4; j++) {
+                if (temp % 10 == 0 ) {
+                    isSpecialNum = false;
+                    continue;
+                }
+                if (n % (temp % 10) != 0) {
+                    isSpecialNum = false;
+                    break;
+                }
+                temp /= 10;
+            }
+            if (isSpecialNum) {
+                System.out.println(i);
+            }
+            isSpecialNum = true;
+        }
+    }
 }
 
 
