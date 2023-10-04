@@ -441,7 +441,7 @@ public class Main {
                 startTime.put(queuedRobot, time);
                 products.poll();
             }
-            time.plusSeconds(1);
+            seconds++;
         }
     }
 
