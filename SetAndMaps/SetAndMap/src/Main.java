@@ -1,8 +1,4 @@
-import com.sun.source.tree.Tree;
-
-import java.text.DecimalFormat;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class Main {
