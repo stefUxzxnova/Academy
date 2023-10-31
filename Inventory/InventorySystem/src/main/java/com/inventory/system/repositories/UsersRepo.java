@@ -43,7 +43,7 @@ public class UsersRepo implements Repository {
         User user = list.stream().filter(e -> e.getId() == id).findFirst().orElse(null);
         if (user != null) {
             list.remove(user);
-            return true;
+            return FileWriter.writeJsonFile(usersFile, list);
         }
         return false;
     }

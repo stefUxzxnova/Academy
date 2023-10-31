@@ -42,7 +42,7 @@ public class InventoryRepo implements Repository {
         List<InventoryItem> list = FileReader.readFile(inventoryFile, InventoryItem.class);
         boolean removed = list.removeIf(item -> item.getId() == id);
         if (removed) {
-            return true;
+            sreturn FileWriter.writeJsonFile(inventoryFile, list);
         }
         return false;
     }
