@@ -3,6 +3,7 @@ import com.inventory.system.entities.enums.Roles;
 import com.inventory.system.entities.items.ElectronicsItem;
 import com.inventory.system.entities.items.FragileItem;
 import com.inventory.system.entities.items.GroceryItem;
+import com.inventory.system.entities.items.InventoryItem;
 import com.inventory.system.entities.user.User;
 import com.inventory.system.entities.user.UserCredentials;
 import com.inventory.system.services.InventoryManager;
@@ -39,7 +40,38 @@ public class App {
             if (loggedUserId == -1) {
                 continue;
             }
-            roleDependingOptions(loggedUserId, usersManager, inventoryManager);
+            while(true){
+                roleDependingOptions(loggedUserId, usersManager, inventoryManager);
+                System.out.print("Enter your choice: ");
+                int choice = Integer.parseInt(scanner.nextLine());
+                switch (choice){
+                    case 1:
+                        break;
+                    case 2:
+                        displayAllItems(inventoryManager);
+                        break;
+                    case 3:
+                        break;
+                    case 4:
+                        break;
+                    case 5:
+                        createInventory(scanner, inventoryManager);
+                        break;
+                    case 6:
+                        createItem(scanner, inventoryManager);
+                        break;
+                    case 7:
+                        break;
+                    case 8:
+                        break;
+                    case 9:
+                        changeInventory(scanner, inventoryManager);
+                        break;
+                    default:
+                        break;
+
+                }
+            }
 
         }
 
@@ -108,25 +140,19 @@ public class App {
 
     private static void roleDependingOptions(long loggedUserId, UsersManager usersManager, InventoryManager inventoryManager){
         User loggedUser = usersManager.getById(loggedUserId);
+        System.out.println("1. Make Order");
+        System.out.println("2. Display items in " + inventoryManager.getCurrentInventoryName());
+        System.out.println("3. Sort items in " + inventoryManager.getCurrentInventoryName());
+        System.out.println("4. Get items by category in " + inventoryManager.getCurrentInventoryName());
         if (loggedUser.getRole().equals(Roles.ADMIN.getDisplayName())) {
             // Display admin options
-            System.out.println("Admin Menu:");
-            System.out.println("1. Create Inventory");
-            System.out.println("2. Add Item to " + inventoryManager.getCurrentInventoryName());
-            System.out.println("3. Update Item in " + inventoryManager.getCurrentInventoryName());
-            System.out.println("4. Delete Item in " + inventoryManager.getCurrentInventoryName());
-            System.out.println("5. Change inventory. You are now in " + inventoryManager.getCurrentInventoryName());
-            // Add other admin-specific options
-        } else if (loggedUser.getRole().equals(Roles.REGULARUSER.getDisplayName())) {
-            // Display regular user options
-            System.out.println("Regular User Menu:");
-            System.out.println("1. Make Order");
-            System.out.println("2. Display Items in " + inventoryManager.getCurrentInventoryName());
-            System.out.println("3. Categorize Items in " + inventoryManager.getCurrentInventoryName());
-            // Add other regular user-specific options
+            System.out.println("5. Create Inventory");
+            System.out.println("6. Add item to " + inventoryManager.getCurrentInventoryName());
+            System.out.println("7. Update item in " + inventoryManager.getCurrentInventoryName());
+            System.out.println("8. Delete item in " + inventoryManager.getCurrentInventoryName());
+            System.out.println("9. Change inventory. You are now in " + inventoryManager.getCurrentInventoryName());
         }
         System.out.println("0. Exit");
-        System.out.print("Enter your choice: ");
     }
 
 
@@ -138,15 +164,15 @@ public class App {
     }
 
     private static void changeInventory(Scanner scanner, InventoryManager inventoryManager){
-        List<File> inventories = DirectoryManager.listAllFilesInDirectory("inventories.directory");
+        List<String> inventories = DirectoryManager.listAllFileNamesInDirectory("inventories.directory");
         System.out.println("Enter inventory name:");
-        printFilesInList(inventories);
+        printList(inventories);
         String name = scanner.nextLine();
 
         if (inventoryManager.getCurrentInventoryName().equals(name)) {
             System.out.println("You are already in " + inventoryManager.getCurrentInventoryName());
         }else {
-            if (!inventories.contains(name + ".json")) {
+            if (!inventories.contains(name)) {
                 System.out.println("Wrong inventory name");
             }else {
                 inventoryManager = new InventoryManager(name);
@@ -155,10 +181,16 @@ public class App {
         }
     }
 
-    private static void printFilesInList(List<File> files){
-        int lastDotIndex = files.lastIndexOf(".");
-        for (File file : files) {
-            System.out.println(file.getName().substring(0, lastDotIndex));
+    private static void displayAllItems(InventoryManager inventoryManager){
+        List<InventoryItem> list = inventoryManager.getAllItems();
+        for (InventoryItem item : list) {
+            item.displayItemDetails();
+        }
+    }
+
+    private static void printList(List<String> list){
+        for (String item : list) {
+            System.out.println(item);
         }
     }
 
@@ -179,7 +211,7 @@ public class App {
         System.out.print("Enter price: ");
         double price = scanner.nextDouble();
         scanner.nextLine();
-        System.out.print("Choose categories: ");
+        System.out.println("Choose categories: ");
         for (ProductCategory category : ProductCategory.values()) {
             System.out.println(category.getCode() + ". " + category.getDisplayName());
         }

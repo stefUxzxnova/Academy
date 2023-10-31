@@ -9,12 +9,17 @@ import java.util.List;
 import java.util.Properties;
 
 public class DirectoryManager {
-    public static List<File> listAllFilesInDirectory(String propertyName){
+    public static List<String> listAllFileNamesInDirectory(String propertyName){
         String url = PropertiesManager.getPropertyValue(propertyName);
+        List<String> fileNames = new ArrayList<>();
         File directory = new File(url);
         if (directory.exists() && directory.isDirectory()) {
             List<File> files = Arrays.stream(directory.listFiles()).toList();
-            return files;
+            for (File file : files) {
+                int lastDotIndex = file.getName().lastIndexOf(".");
+                fileNames.add(file.getName().substring(0, lastDotIndex));
+            }
+            return fileNames;
         }
         return new ArrayList<>();
     }

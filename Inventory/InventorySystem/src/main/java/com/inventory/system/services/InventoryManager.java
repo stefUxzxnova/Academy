@@ -23,13 +23,11 @@ public class InventoryManager {
         if (item == null) {
             return false;
         }
-        // Validate the item data, e.g., check if required fields are provided
-//        if (isValidItem(item)) {
-//            // Forward the validated data to the repository for addition
-//            return inventoryRepo.create(item);
-//        }
-        // Handle validation failure, e.g., throw an exception or return null
-        return true;
+        InventoryItem createdItem = inventoryRepo.create(item);
+        if (createdItem != null) {
+            return true;
+        }
+        return false;
     }
 
 
