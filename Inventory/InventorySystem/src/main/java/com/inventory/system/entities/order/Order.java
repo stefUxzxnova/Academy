@@ -25,12 +25,12 @@ public class Order {
     @JsonProperty
     private String status;
 
-    public Order(long userId, List<InventoryItem> orderItems, LocalDate madeOn) {
+    public Order(long userId, List<InventoryItem> orderItems) {
         this.id = uid++;
         this.userId = userId;
         this.orderItems = orderItems;
         this.totalPrice = calculateTotalPrice();
-        this.madeOn = madeOn;
+        this.madeOn = LocalDate.now();
         this.status = OrderStatus.Pending.getDisplayName();
     }
 
