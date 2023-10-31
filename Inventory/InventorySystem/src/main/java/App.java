@@ -7,8 +7,10 @@ import com.inventory.system.entities.user.User;
 import com.inventory.system.entities.user.UserCredentials;
 import com.inventory.system.services.InventoryManager;
 import com.inventory.system.services.UsersManager;
+import com.inventory.system.utils.DirectoryManager;
 
 import javax.management.relation.Role;
+import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -135,6 +137,30 @@ public class App {
         System.out.println("You are now in the new inventory");
     }
 
+    private static void changeInventory(Scanner scanner, InventoryManager inventoryManager){
+        List<File> inventories = DirectoryManager.listAllFilesInDirectory("inventories.directory");
+        System.out.println("Enter inventory name:");
+        printFilesInList(inventories);
+        String name = scanner.nextLine();
+
+        if (inventoryManager.getCurrentInventoryName().equals(name)) {
+            System.out.println("You are already in " + inventoryManager.getCurrentInventoryName());
+        }else {
+            if (!inventories.contains(name + ".json")) {
+                System.out.println("Wrong inventory name");
+            }else {
+                inventoryManager = new InventoryManager(name);
+                System.out.println("You are now in " + inventoryManager.getCurrentInventoryName());
+            }
+        }
+    }
+
+    private static void printFilesInList(List<File> files){
+        int lastDotIndex = files.lastIndexOf(".");
+        for (File file : files) {
+            System.out.println(file.getName().substring(0, lastDotIndex));
+        }
+    }
 
     private static void createItem(Scanner scanner, InventoryManager inventoryManager){
         System.out.println("1. Grocery");
@@ -203,7 +229,7 @@ public class App {
                 System.out.println("Invalid choice.");
         }
     }
-//"inventories.directory"
+
 
 
 }
