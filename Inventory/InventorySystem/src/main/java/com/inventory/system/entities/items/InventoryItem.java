@@ -32,9 +32,12 @@ public class InventoryItem extends AbstractItem {
 
     @Override
     public double calculateValue() {
-        return this.price * quantity;
+        return this.price * this.quantity;
     }
 
+    public double calculateValue(int quantity) {
+        return this.price * quantity;
+    }
     @Override
     public double getPrice() {
         return this.price;

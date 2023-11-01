@@ -79,16 +79,16 @@ public class GroceryItem extends InventoryItem implements Perishable, Breakable 
     }
 
     @Override
-    public double calculateValue() {
+    public double calculateValue(int quantity) {
         LocalDate today = LocalDate.now();
         // Calculate the remaining days until the expiration date
         long daysUntilExpiration = ChronoUnit.DAYS.between(today, expirationDate);
 
         if (daysUntilExpiration >= 0) {
             if (daysUntilExpiration <= 7) {
-                return getPrice() * daysUntilExpiration / 7;
+                return (getPrice() * daysUntilExpiration / 7) * quantity;
             } else {
-                return getPrice();
+                return getPrice() * quantity;
             }
         } else {
             // The item has already expired, so its value is 0.

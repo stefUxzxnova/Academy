@@ -38,10 +38,9 @@ public class FragileItem extends InventoryItem implements Breakable {
         }
     }
 
-    @Override
-    public double calculateValue() {
-        double totalWeight = weight * getQuantity();
-        double totalPrice = getPrice() * getQuantity();
+    public double calculateValue(int quantity) {
+        double totalWeight = weight * quantity;
+        double totalPrice = getPrice() * quantity;
 
         if (totalWeight <= 10) {
             // Apply a base price for items with a totalWeight = 10 or less

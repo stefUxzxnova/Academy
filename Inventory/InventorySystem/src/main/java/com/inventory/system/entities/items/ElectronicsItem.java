@@ -28,9 +28,8 @@ public class ElectronicsItem extends InventoryItem implements Breakable{
         }
     }
 
-    @Override
-    public double calculateValue() {
-        double totalValue = getPrice() * getQuantity();
+    public double calculateValue(int quantity) {
+        double totalValue = getPrice() * quantity;
 
         if (totalValue <= 1000) {
             // Apply a base price for items with a totalWeight = 10 or less
