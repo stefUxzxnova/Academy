@@ -42,7 +42,7 @@ public class InventoryRepo implements Repository {
         List<InventoryItem> list = FileReader.readFile(inventoryFile, InventoryItem.class);
         boolean removed = list.removeIf(item -> item.getId() == id);
         if (removed) {
-            sreturn FileWriter.writeJsonFile(inventoryFile, list);
+            return FileWriter.writeJsonFile(inventoryFile, list);
         }
         return false;
     }
@@ -50,16 +50,14 @@ public class InventoryRepo implements Repository {
     @Override
     public boolean update(Object entity) {
         List<InventoryItem> list = FileReader.readFile(inventoryFile, InventoryItem.class);
-        int index = list.indexOf(entity);
-        if (index != -1) {
-            list.set(index, (InventoryItem) entity);
-            /*
-             * update the json file with the updated list */
-            return FileWriter.writeJsonFile(inventoryFile, list);
-        } else {
-            // if item with the given id is not found
-            return false;
+        InventoryItem modifiedItem = (InventoryItem) entity;
+        for (InventoryItem item : list) {
+            if (item.getId() == modifiedItem.getId()) {
+                int index = list.indexOf(item);
+                list.set(index, modifiedItem);
+            }
         }
+        return FileWriter.writeJsonFile(inventoryFile, list);
     }
 
     public String getCurrentInventoryName(){

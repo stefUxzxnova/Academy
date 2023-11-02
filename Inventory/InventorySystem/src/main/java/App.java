@@ -1,26 +1,28 @@
+import com.ecommerce.system.processors.PaymentProcessor;
+import com.inventory.system.entities.enums.OrderStatus;
 import com.inventory.system.entities.enums.ProductCategory;
 import com.inventory.system.entities.enums.Roles;
 import com.inventory.system.entities.items.ElectronicsItem;
 import com.inventory.system.entities.items.FragileItem;
 import com.inventory.system.entities.items.GroceryItem;
 import com.inventory.system.entities.items.InventoryItem;
+import com.inventory.system.entities.order.Order;
 import com.inventory.system.entities.user.User;
 import com.inventory.system.entities.user.UserCredentials;
 import com.inventory.system.services.InventoryManager;
+import com.inventory.system.services.OrdersManager;
 import com.inventory.system.services.UsersManager;
+import com.inventory.system.services.enums.SortCriteria;
 import com.inventory.system.utils.DirectoryManager;
 
-import javax.management.relation.Role;
-import java.io.File;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class App {
     public static void main(String[] args) {
         InventoryManager inventoryManager = new InventoryManager();
-        //PaymentProcessor paymentProcessor = new PaymentProcessor();
+        OrdersManager ordersManager = new OrdersManager();
+        PaymentProcessor paymentProcessor = new PaymentProcessor();
         User user = new User(
                 "Ivan",
                 new UserCredentials("ivannn", "A1234456"),
@@ -46,13 +48,16 @@ public class App {
                 int choice = Integer.parseInt(scanner.nextLine());
                 switch (choice){
                     case 1:
+                        makeOrder(scanner, inventoryManager, ordersManager, paymentProcessor, loggedUserId);
                         break;
                     case 2:
                         displayAllItems(inventoryManager);
                         break;
                     case 3:
+                        displayItemsSorted(scanner, inventoryManager);
                         break;
                     case 4:
+                        getItemsByCategory(scanner, inventoryManager);
                         break;
                     case 5:
                         createInventory(scanner, inventoryManager);
@@ -61,8 +66,10 @@ public class App {
                         createItem(scanner, inventoryManager);
                         break;
                     case 7:
+                        updateInventoryItem(scanner, inventoryManager);
                         break;
                     case 8:
+                        deleteInventoryItem(scanner, inventoryManager);
                         break;
                     case 9:
                         changeInventory(scanner, inventoryManager);
@@ -76,6 +83,7 @@ public class App {
         }
 
 }
+
 
     private static void displayMenu() {
         System.out.println("1. Log In");
@@ -143,7 +151,7 @@ public class App {
         System.out.println("1. Make Order");
         System.out.println("2. Display items in " + inventoryManager.getCurrentInventoryName());
         System.out.println("3. Sort items in " + inventoryManager.getCurrentInventoryName());
-        System.out.println("4. Get items by category in " + inventoryManager.getCurrentInventoryName());
+        System.out.println("4. Get items by category from " + inventoryManager.getCurrentInventoryName());
         if (loggedUser.getRole().equals(Roles.ADMIN.getDisplayName())) {
             // Display admin options
             System.out.println("5. Create Inventory");
@@ -185,12 +193,13 @@ public class App {
         List<InventoryItem> list = inventoryManager.getAllItems();
         for (InventoryItem item : list) {
             item.displayItemDetails();
+            System.out.println();
         }
     }
 
-    private static void printList(List<String> list){
-        for (String item : list) {
-            System.out.println(item);
+    private static <T> void printList(List<T> list){
+        for (T item : list) {
+            System.out.println(item.toString());
         }
     }
 
@@ -262,6 +271,177 @@ public class App {
         }
     }
 
+    private static void makeOrder(Scanner scanner, InventoryManager inventoryManager, OrdersManager ordersManager, PaymentProcessor paymentProcessor, long loggedUserId){
+        Map<InventoryItem, Integer> orderItems = new HashMap<>();
+        System.out.println("Available Items:");
+        displayAllItems(inventoryManager);
 
+        while (true) {
+            System.out.print("Enter the ID of the item you want to order (or 'end' to finish): ");
+            String input = scanner.nextLine().toLowerCase();
+            if ("end".equalsIgnoreCase(input)) {
+                break;
+            }
+            try {
+                int itemId = Integer.parseInt(input);
+                InventoryItem selectedItem = inventoryManager.getById(itemId);
+                if (selectedItem != null) {
+                    System.out.print("Enter the quantity you want to order: ");
+                    int quantity = Integer.parseInt(scanner.nextLine());
 
+                    if (checkQuantity(selectedItem, quantity)) {
+                        orderItems.put(selectedItem, quantity);
+                    }else{
+                        System.out.println("Invalid quantity");
+                    }
+                } else {
+                    System.out.println("Invalid item ID. Please choose a valid item.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid item ID or 'end' to finish.");
+            }
+        }
+        if (!orderItems.isEmpty()) {
+            checkOut(scanner, orderItems, ordersManager, paymentProcessor, inventoryManager, loggedUserId);
+        }
+    }
+
+    private static void checkOut(Scanner scanner,
+                                 Map<InventoryItem, Integer> orderItems,
+                                 OrdersManager ordersManager,
+                                 PaymentProcessor paymentProcessor,
+                                 InventoryManager inventoryManager,
+                                 long loggedUserId) {
+        double orderTotalPrice = ordersManager.calculateOrderTotalPrice(orderItems);
+        while (true) {
+            System.out.println("Do you want to proceed to checkout?");
+            String input = scanner.nextLine().toLowerCase();
+            switch (input) {
+                case "yes" -> {
+                    if (paymentProcess(scanner, paymentProcessor, orderTotalPrice)) {
+                        ordersManager.create(loggedUserId, orderItems, OrderStatus.Done.getDisplayName(), inventoryManager);
+                    }
+                    return;
+                }
+                case "no" -> {
+                    ordersManager.create(loggedUserId, orderItems, OrderStatus.Pending.getDisplayName(), inventoryManager);
+                    System.out.println("You can pay later");
+                    return;
+                }
+                default -> System.out.println("Yes or no?");
+            }
+        }
+    }
+
+    private static boolean paymentProcess(Scanner scanner, PaymentProcessor paymentProcessor, double orderTotalPrice) {
+        System.out.println("Payment Options:");
+        System.out.println("1. Credit Card Payment");
+        System.out.println("2. PayPal Payment");
+        System.out.print("Select a payment option: ");
+        int choice = Integer.parseInt(scanner.nextLine());
+
+        if (choice == 1) {
+            // Credit Card Payment
+            String cardHolderName;
+            String cardNumber;
+            int cvv;
+            double totalCost;
+
+            // Gather credit card information
+            System.out.println("Enter Card Holder Name: ");
+            cardHolderName = scanner.nextLine();
+            System.out.println("Enter Card Number: ");
+            cardNumber = scanner.nextLine();
+            System.out.println("Enter CVV: ");
+            cvv = Integer.parseInt(scanner.nextLine());
+
+            // Process the credit card payment
+            boolean paymentResult = paymentProcessor.processCreditCardPayment(cardNumber, cvv, cardHolderName, orderTotalPrice);
+
+            if (paymentResult) {
+                System.out.println("Credit Card Payment Successful.");
+                return true;
+            } else {
+                System.out.println("Credit Card Payment Failed.");
+                return false;
+            }
+        } else if (choice == 2) {
+            // PayPal Payment
+            System.out.println("PayPal payment processing is not implemented in this example.");
+        }
+        return false;
+    }
+
+    private static boolean checkQuantity(InventoryItem item, int quantity) {
+        if (quantity <= item.getQuantity()) {
+            System.out.println("Added " + item.getName() + " x" + quantity + " to the order.");
+            return true;
+        } else {
+            System.out.println("Insufficient quantity for " + item.getName());
+            return false;
+        }
+    }
+
+    private static void displayItemsSorted(Scanner scanner, InventoryManager inventoryManager){
+        System.out.println("Sort by: 1.Name / 2.Price");
+        Integer option = Integer.parseInt(scanner.nextLine());
+        switch (option){
+            case 1:
+                printList(inventoryManager.getItemsSortedBy(SortCriteria.NAME));
+                break;
+            case 2:
+                printList(inventoryManager.getItemsSortedBy(SortCriteria.PRICE));
+                break;
+            default:
+                System.out.println("Wrong input!");
+        }
+    }
+
+    private static void getItemsByCategory(Scanner scanner, InventoryManager inventoryManager){
+        for (ProductCategory category : ProductCategory.values()) {
+            System.out.println(category.getCode() + ". " + category.getDisplayName());
+        }
+        System.out.println("Choose category by its code: ");
+        int chosenCategoryCode = Integer.parseInt(scanner.nextLine());
+        printList(inventoryManager.getItemsByCategory(ProductCategory.getCategoryByCode(chosenCategoryCode)));
+    }
+
+    private static void deleteInventoryItem(Scanner scanner, InventoryManager inventoryManager){
+        System.out.println("Choose item by its ID: ");
+        displayAllItems(inventoryManager);
+        long chosenItem = Integer.parseInt(scanner.nextLine());
+        if (inventoryManager.deleteItem(chosenItem)) {
+            System.out.println("Successfully deleted item with ID " + chosenItem );
+        }else{
+            System.out.println("Unsuccessfully");
+        }
+    }
+
+    private static void updateInventoryItem(Scanner scanner, InventoryManager inventoryManager) {
+        System.out.println("Choose item by its ID: ");
+        displayAllItems(inventoryManager);
+        long chosenItem = Integer.parseInt(scanner.nextLine());
+        InventoryItem item = inventoryManager.getById(chosenItem);
+        System.out.println("1. Change name / 2. Change price");
+        String input = scanner.nextLine();
+        switch (input) {
+            case "1":
+                System.out.println("Enter new name:");
+                String name = scanner.nextLine();
+                item.setName(name);
+                break;
+            case "2":
+                System.out.println("Enter new price:");
+                double price = Double.parseDouble(scanner.nextLine());
+                item.setPrice(price);
+                break;
+            default:
+                System.out.println("Wrong");
+        }
+        if (inventoryManager.updateItem(item)) {
+            System.out.println("Successfully deleted item with ID " + chosenItem);
+        } else {
+            System.out.println("Unsuccessfully");
+        }
+    }
 }
