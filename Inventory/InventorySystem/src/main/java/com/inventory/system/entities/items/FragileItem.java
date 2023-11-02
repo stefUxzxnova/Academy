@@ -57,7 +57,7 @@ public class FragileItem extends InventoryItem implements Breakable {
     @Override
     public void displayItemDetails() {
         super.displayItemDetails();
-        System.out.println("IsBroken: " + this.isBroken);
-        System.out.println("Weight: " + this.weight);
+        System.out.print(", IsBroken: " + this.isBroken);
+        System.out.print(", Weight: " + this.weight);
     }
 }

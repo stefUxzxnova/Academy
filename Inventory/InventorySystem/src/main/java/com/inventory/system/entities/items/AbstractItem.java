@@ -39,10 +39,10 @@ public abstract class AbstractItem implements Item, Categorizable, Sellable{
 
     @Override
     public void displayItemDetails() {
-        System.out.println("Item Name: " + getName());
-        System.out.println("Description: " + getDescription());
-        System.out.println("Price: $" + getPrice());
-        System.out.println("Category: " + getCategory());
+        System.out.print(", Item Name: " + getName());
+        System.out.print(", Description: " + getDescription());
+        System.out.print(", Price: $" + getPrice());
+        System.out.print(", Category: " + getCategory());
     }
 
 

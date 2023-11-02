@@ -46,6 +46,6 @@ public class ElectronicsItem extends InventoryItem implements Breakable{
     @Override
     public void displayItemDetails() {
         super.displayItemDetails();
-        System.out.println("isBroken: " + this.isBroken);
+        System.out.print(" isBroken: " + this.isBroken);
     }
 }

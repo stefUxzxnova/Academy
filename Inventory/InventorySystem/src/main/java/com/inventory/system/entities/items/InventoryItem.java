@@ -81,9 +81,14 @@ public class InventoryItem extends AbstractItem {
 
     @Override
     public void displayItemDetails() {
-        System.out.println("Id: " + this.id);
+        System.out.print("Id: " + this.id);
         super.displayItemDetails();
-        System.out.println("Quantity: " + this.quantity);
-        System.out.println("Total Value: $" + calculateValue());
+        System.out.print(", Quantity: " + this.quantity);
+        System.out.print(", Total Value: $" + calculateValue());
+    }
+
+    @Override
+    public String toString() {
+        return "InventoryItem{ id=" + id + ", name= " + getName() + ", quantity=" + quantity + ", price=" + price + '}';
     }
 }

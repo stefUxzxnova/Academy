@@ -20,18 +20,17 @@ public class FileReader {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static <T> List<T> readFile(File file, Class<T> valueType){
-
         if (file.length() == 0) {
             return new ArrayList<>();
         }
-        try
-        {
+
+        try {
             return MAPPER.readValue(file, MAPPER.getTypeFactory().constructCollectionType(List.class, valueType));
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             System.out.println("Error occurred during reading the file.");
             e.printStackTrace();
         }
+
         return new ArrayList<>();
     }
 }

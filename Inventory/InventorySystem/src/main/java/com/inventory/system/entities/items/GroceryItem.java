@@ -62,9 +62,9 @@ public class GroceryItem extends InventoryItem implements Perishable, Breakable 
     @Override
     public void displayItemDetails() {
         super.displayItemDetails();
-        System.out.println("EXPIRATION DATE: " + this.expirationDate);
-        System.out.println("hasExpired: " + this.hasExpired);
-        System.out.println("isBroken: " + this.isBroken);
+        System.out.print(" EXPIRATION DATE: " + this.expirationDate);
+        System.out.print(" hasExpired: " + this.hasExpired);
+        System.out.print(" isBroken: " + this.isBroken);
     }
 
     @Override
