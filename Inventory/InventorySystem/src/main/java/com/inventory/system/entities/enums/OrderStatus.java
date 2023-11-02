@@ -2,8 +2,7 @@ package com.inventory.system.entities.enums;
 
 public enum OrderStatus{
     Pending("Pending"),
-    Done("Done"),
-    Canceled("Canceled");
+    Done("Done");
 
     private final String displayName;
 
