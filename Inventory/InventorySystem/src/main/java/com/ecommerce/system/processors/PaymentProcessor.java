@@ -45,6 +45,7 @@ public class PaymentProcessor implements CreditCartPayment, PayPalPayment {
 
     @Override
     public boolean processPayPalPayment(String paypalUsername) {
+        // TODO: 2.11.2023 г.
         return false;
     }
 
