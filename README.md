@@ -1,4 +1,4 @@
-# Final project 
+# Final project - Pair of employees who have worked together
 
 # Brief description
 
