@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Employee Pairs Result</title>
+</head>
+<body>
+
+<h2>Employee Pairs Result</h2>
+
+<div th:if="${pair.isPresent()}">
+    <div th:with="pairObject=${pair.get()}">
+        <p>Employee One ID: <span th:text="${pairObject.employeeOne.employeeId}"></span></p>
+        <p>Employee Two ID: <span th:text="${pairObject.employeeTwo.employeeId}"></span></p>
+
+        <h3>Projects and Durations:</h3>
+        <ul>
+            <li th:each="project : ${pairObject.projectsAndDurations.entrySet()}">
+                <p>
+                    Project ID: <span th:text="${project.key}"></span>
+                    , Duration (days): <span th:text="${project.value}"></span>
+                </p>
+            </li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>
