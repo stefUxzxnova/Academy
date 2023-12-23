@@ -19,6 +19,7 @@ Java Spring Boot application designed to process data from CSV files containing 
 1. Data Retrieval:
 
   * Read data from the CSV file, representing employees working on projects within specified date ranges (EmployeeToProjectCsv: employeeId, projectId, dateFrom, dateTo).
+<br><br><b> Note: </b> The CSV file, test.csv, is located in the resources/testFiles directory.
 
 2. Data Validation and Conversion:
 
@@ -27,7 +28,8 @@ Java Spring Boot application designed to process data from CSV files containing 
     * Check if the object already exist in the database.
     * Perform date format conversions and validations.
     * Skip lines with invalid data.
-      
+
+    <b> Note: </b> Database configuration and file paths are specified in application.properties
 3. Data Storage in Database and Dynamic List:
 
   * Use a Mapper to convert CSV file objects (EmployeeToProjectCsv) to entities (EmployeeToProject), including assigning unique IDs.
