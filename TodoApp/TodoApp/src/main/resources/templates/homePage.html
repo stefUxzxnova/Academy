@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="">
+</head>
+<body>
+    <h1>Welcome to my channel pilitaaa</h1>
+    <form method="post">
+        <a th:href="@{/login}">Login</a>
+        <span th:text="${today}"></span>
+        <span th:text="${user.username}"></span>
+        <span th:text="${user.email}"></span>
+        <label for="username">Username</label><input type="text" name="username" id="username">
+        <label for="password">Password</label><input type="text" name="password" id="password">
+        <!--<input type="submit" value="Submit">-->
+        <button>Submit</button>
+    </form>
+</body>
+</html>
